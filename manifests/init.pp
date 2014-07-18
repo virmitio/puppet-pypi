@@ -78,14 +78,21 @@ class pypi (
   }
 
   include apache
-  include apache::mod::wsgi
+  #include apache::mod::wsgi
+  class {'apache::mod::wsgi':
+     wsgi_socket_prefix => '/var/run/wsgi'
+  }
   apache::vhost { 'pypi':
     priority      => '10',
     port          => $pypi_port,
     docroot       => $pypi_root,
     docroot_owner => 'pypi',
     docroot_group => 'pypi',
-    template      => 'pypi/vhost-pypi.conf.erb',
+    wsgi_script_aliases => {'/' => "${pypi_root}/pypiserver_wsgi.py"},
+    wsgi_process_group  => 'pypi',
+    wsgi_daemon_process => 'pypi user=pypi group=pypi processes=1 threads=5 maximum-requests=500 umask=0007 display-name=wsgi-pypi inactivity-timeout=300',
+#    template      => 'pypi/vhost-pypi.conf.erb',
+    custom_fragment => template('pypi/vhost-pypi.conf.erb'),
   }
 
   package { 'python-pip':
