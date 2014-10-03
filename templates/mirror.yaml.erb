@@ -1,0 +1,12 @@
+cache-root: /tmp/cache
+
+mirrors:
+  - name: openstack
+    projects:
+      - https://git.openstack.org/openstack/requirements
+    output: <%= pypi_mirror_dir %>/packages/openstack
+
+  - name: openstack-infra
+    projects:
+      - https://git.openstack.org/openstack-infra/config
+    output: <%= pypi_mirror_dir %>/packages/openstack-infra
